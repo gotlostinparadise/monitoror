@@ -44,6 +44,7 @@ func TestQueryParams_HTTPStatusParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(false),
+		Headers:       nil,
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPStatus(ctx))
@@ -64,6 +65,7 @@ func TestQueryParams_HTTPRawParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(true),
+		Headers:       nil,
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPRaw(ctx))
@@ -88,6 +90,7 @@ func TestQueryParams_HTTPFormattedParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(false),
+		Headers:       nil,
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPFormatted(ctx))

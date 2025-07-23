@@ -26,7 +26,7 @@ func TestHTTPRepository_Get(t *testing.T) {
 	defer ts.Close()
 
 	repository := NewHTTPRepository(&config.HTTP{SSLVerify: false, Timeout: 2000})
-	response, err := repository.Get(ts.URL, nil)
+	response, err := repository.Get(ts.URL, nil, nil)
 
 	if assert.NoError(t, err) {
 		assert.Equal(t, 200, response.StatusCode)
@@ -36,7 +36,7 @@ func TestHTTPRepository_Get(t *testing.T) {
 
 func TestHTTPRepository_Get_Error(t *testing.T) {
 	repository := NewHTTPRepository(&config.HTTP{SSLVerify: false, Timeout: 2000})
-	_, err := repository.Get("http://monitoror.example.com", nil)
+	_, err := repository.Get("http://monitoror.example.com", nil, nil)
 	assert.Error(t, err)
 }
 
@@ -51,6 +51,6 @@ func TestHTTPRepository_Get_ReadAll_Error(t *testing.T) {
 	})
 	repository := httpRepository{verifyClient: client, skipClient: client, config: &config.HTTP{SSLVerify: true, Timeout: 2000}}
 
-	_, err := repository.Get("http://monitoror.example.com", nil)
+	_, err := repository.Get("http://monitoror.example.com", nil, nil)
 	assert.Error(t, err)
 }

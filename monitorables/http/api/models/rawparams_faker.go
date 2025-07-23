@@ -11,11 +11,12 @@ import (
 
 type (
 	HTTPRawParams struct {
-		URL           string `json:"url" query:"url" validate:"required,url,http"`
-		Regex         string `json:"regex,omitempty" query:"regex" validate:"regex"`
-		StatusCodeMin *int   `json:"statusCodeMin,omitempty" query:"statusCodeMin"`
-		StatusCodeMax *int   `json:"statusCodeMax,omitempty" query:"statusCodeMax"`
-		SSLVerify     *bool  `json:"sslVerify,omitempty" query:"sslVerify"`
+		URL           string            `json:"url" query:"url" validate:"required,url,http"`
+		Regex         string            `json:"regex,omitempty" query:"regex" validate:"regex"`
+		StatusCodeMin *int              `json:"statusCodeMin,omitempty" query:"statusCodeMin"`
+		StatusCodeMax *int              `json:"statusCodeMax,omitempty" query:"statusCodeMax"`
+		SSLVerify     *bool             `json:"sslVerify,omitempty" query:"sslVerify"`
+		Headers       map[string]string `json:"headers,omitempty" query:"headers"`
 
 		Status      coreModels.TileStatus     `json:"status" query:"status"`
 		Message     string                    `json:"message" query:"message"`
@@ -33,9 +34,10 @@ func (p *HTTPRawParams) GetStatusCodes() (min int, max int) {
 	return getStatusCodesWithDefault(p.StatusCodeMin, p.StatusCodeMax)
 }
 
-func (p *HTTPRawParams) GetRegex() string          { return p.Regex }
-func (p *HTTPRawParams) GetRegexp() *regexp.Regexp { return getRegexp(p.GetRegex()) }
-func (p *HTTPRawParams) GetSSLVerify() *bool       { return p.SSLVerify }
+func (p *HTTPRawParams) GetRegex() string              { return p.Regex }
+func (p *HTTPRawParams) GetRegexp() *regexp.Regexp     { return getRegexp(p.GetRegex()) }
+func (p *HTTPRawParams) GetSSLVerify() *bool           { return p.SSLVerify }
+func (p *HTTPRawParams) GetHeaders() map[string]string { return p.Headers }
 
 func (p *HTTPRawParams) GetStatus() coreModels.TileStatus        { return p.Status }
 func (p *HTTPRawParams) GetMessage() string                      { return p.Message }
