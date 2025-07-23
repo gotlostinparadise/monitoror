@@ -4,6 +4,6 @@ package api
 
 type (
 	Repository interface {
-		OpenSocket(hostname string, port int) error
+		OpenSocket(hostname string, port int, network string) error
 	}
 )

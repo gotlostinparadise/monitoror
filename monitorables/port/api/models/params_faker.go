@@ -8,12 +8,27 @@ import (
 )
 
 type (
+	PortType string
+
 	PortParams struct {
 		params.Default
 
-		Hostname string `json:"hostname" query:"hostname"`
-		Port     int    `json:"port" query:"port"`
+		Hostname string   `json:"hostname" query:"hostname"`
+		Port     int      `json:"port" query:"port"`
+		Type     PortType `json:"type,omitempty" query:"type"`
 
 		Status coreModels.TileStatus `json:"status" query:"status"`
 	}
 )
+
+const (
+	TCPPortType PortType = "tcp"
+	UDPPortType PortType = "udp"
+)
+
+func (p *PortParams) GetType() PortType {
+	if p.Type == "" {
+		return TCPPortType
+	}
+	return p.Type
+}

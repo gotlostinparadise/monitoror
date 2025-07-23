@@ -15,4 +15,7 @@ func TestPortParams_Validate(t *testing.T) {
 
 	param = &PortParams{Hostname: "test", Port: 22}
 	test.AssertParams(t, param, 0)
+
+	param = &PortParams{Hostname: "test", Port: 22, Type: "invalid"}
+	test.AssertParams(t, param, 1)
 }

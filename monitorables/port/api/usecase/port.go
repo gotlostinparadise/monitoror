@@ -24,7 +24,7 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 	tile = coreModels.NewTile(api.PortTileType)
 	tile.Label = fmt.Sprintf("%s:%d", params.Hostname, params.Port)
 
-	err = pu.repository.OpenSocket(params.Hostname, params.Port)
+	err = pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()))
 	if err == nil {
 		tile.Status = coreModels.SuccessStatus
 	} else {
