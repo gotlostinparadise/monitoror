@@ -10,6 +10,7 @@ type (
 	GenericParamsProvider interface {
 		GetURL() (url string)
 		GetStatusCodes() (min int, max int)
+		GetSSLVerify() *bool
 	}
 
 	RegexParamsProvider interface {

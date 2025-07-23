@@ -34,6 +34,7 @@ func initEcho() (ctx echo.Context, res *httptest.ResponseRecorder) {
 func TestQueryParams_HTTPStatusParams(t *testing.T) {
 	ctx, _ := initEcho()
 	ctx.QueryParams().Set("url", "http://monitoror.example.com")
+	ctx.QueryParams().Set("sslVerify", "false")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
 
@@ -42,6 +43,7 @@ func TestQueryParams_HTTPStatusParams(t *testing.T) {
 		URL:           "http://monitoror.example.com",
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
+		SSLVerify:     pointer.ToBool(false),
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPStatus(ctx))
@@ -51,6 +53,7 @@ func TestQueryParams_HTTPRawParams(t *testing.T) {
 	ctx, _ := initEcho()
 	ctx.QueryParams().Set("url", "http://monitoror.example.com")
 	ctx.QueryParams().Set("regex", "test")
+	ctx.QueryParams().Set("sslVerify", "true")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
 
@@ -60,6 +63,7 @@ func TestQueryParams_HTTPRawParams(t *testing.T) {
 		Regex:         "test",
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
+		SSLVerify:     pointer.ToBool(true),
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPRaw(ctx))
@@ -71,6 +75,7 @@ func TestQueryParams_HTTPFormattedParams(t *testing.T) {
 	ctx.QueryParams().Set("key", "key")
 	ctx.QueryParams().Set("format", "JSON")
 	ctx.QueryParams().Set("regex", "test")
+	ctx.QueryParams().Set("sslVerify", "false")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
 
@@ -82,6 +87,7 @@ func TestQueryParams_HTTPFormattedParams(t *testing.T) {
 		Format:        models.JSONFormat,
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
+		SSLVerify:     pointer.ToBool(false),
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPFormatted(ctx))

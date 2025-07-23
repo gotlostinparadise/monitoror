@@ -59,7 +59,7 @@ func (hu *httpUsecase) httpAll(tileType coreModels.TileType, params models.Gener
 	tile.Status = coreModels.SuccessStatus
 
 	// Download page
-	response, err := hu.get(params.GetURL())
+	response, err := hu.get(params.GetURL(), params.GetSSLVerify())
 	if err != nil {
 		return nil, &coreModels.MonitororError{Err: err, Tile: tile, Message: fmt.Sprintf("unable to get %s", params.GetURL())}
 	}
@@ -141,7 +141,7 @@ func (hu *httpUsecase) httpAll(tileType coreModels.TileType, params models.Gener
 }
 
 // Adding cache to Repository.Get
-func (hu *httpUsecase) get(url string) (*models.Response, error) {
+func (hu *httpUsecase) get(url string, sslVerify *bool) (*models.Response, error) {
 	response := &models.Response{}
 
 	// Lookup in cache
@@ -152,7 +152,7 @@ func (hu *httpUsecase) get(url string) (*models.Response, error) {
 	}
 
 	// Download page
-	response, err := hu.repository.Get(url)
+	response, err := hu.repository.Get(url, sslVerify)
 	if err != nil {
 		return nil, err
 	}
