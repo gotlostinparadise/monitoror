@@ -12,9 +12,9 @@ type Repository struct {
 	mock.Mock
 }
 
-// Get provides a mock function with given fields: url, sslVerify
-func (_m *Repository) Get(url string, sslVerify *bool) (*models.Response, error) {
-	ret := _m.Called(url, sslVerify)
+// Get provides a mock function with given fields: url, headers, sslVerify
+func (_m *Repository) Get(url string, headers map[string]string, sslVerify *bool) (*models.Response, error) {
+	ret := _m.Called(url, headers, sslVerify)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
@@ -22,19 +22,19 @@ func (_m *Repository) Get(url string, sslVerify *bool) (*models.Response, error)
 
 	var r0 *models.Response
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, *bool) (*models.Response, error)); ok {
-		return rf(url, sslVerify)
+	if rf, ok := ret.Get(0).(func(string, map[string]string, *bool) (*models.Response, error)); ok {
+		return rf(url, headers, sslVerify)
 	}
-	if rf, ok := ret.Get(0).(func(string, *bool) *models.Response); ok {
-		r0 = rf(url, sslVerify)
+	if rf, ok := ret.Get(0).(func(string, map[string]string, *bool) *models.Response); ok {
+		r0 = rf(url, headers, sslVerify)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Response)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, *bool) error); ok {
-		r1 = rf(url, sslVerify)
+	if rf, ok := ret.Get(1).(func(string, map[string]string, *bool) error); ok {
+		r1 = rf(url, headers, sslVerify)
 	} else {
 		r1 = ret.Error(1)
 	}
