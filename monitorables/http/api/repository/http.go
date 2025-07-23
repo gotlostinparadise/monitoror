@@ -39,7 +39,7 @@ func NewHTTPRepository(config *config.HTTP) api.Repository {
 	return &httpRepository{verifyClient: verifyClient, skipClient: skipClient, config: config}
 }
 
-func (r *httpRepository) Get(url string, sslVerify *bool) (response *models.Response, err error) {
+func (r *httpRepository) Get(url string, headers map[string]string, sslVerify *bool) (response *models.Response, err error) {
 	useVerify := r.config.SSLVerify
 	if sslVerify != nil {
 		useVerify = *sslVerify
@@ -50,7 +50,14 @@ func (r *httpRepository) Get(url string, sslVerify *bool) (response *models.Resp
 		client = r.skipClient
 	}
 
-	resp, err := client.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return
+	}
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return
 	}

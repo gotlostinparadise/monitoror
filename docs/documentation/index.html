@@ -1513,6 +1513,10 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
         <dd>
           Check if SSL certificate is valid, overrides core configuration
         </dd>
+        <dt><code>headers</code> <code class="type">object</code></dt>
+        <dd>
+          Additional HTTP headers sent with the request
+        </dd>
       </dl>
 
       <p class="note">
@@ -1526,7 +1530,8 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
   "type": "HTTP-STATUS",
   "params": {
     "url": "http://localhost/test",
-    "statusCodeMax": 299
+    "statusCodeMax": 299,
+    "headers": {"User-Agent": "Monitoror"}
   }
 }
         </code></pre>
@@ -1586,6 +1591,10 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
         <dd>
           Check if SSL certificate is valid, overrides core configuration
         </dd>
+        <dt><code>headers</code> <code class="type">object</code></dt>
+        <dd>
+          Additional HTTP headers sent with the request
+        </dd>
 
         <dt><code>regex</code> <code class="type">string</code></dt>
         <dd>
@@ -1609,7 +1618,8 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
   "type": "HTTP-RAW",
   "params": {
     "url": "http://localhost/tag",
-    "regex": "version:\\s*([^\\s]*)"
+    "regex": "version:\\s*([^\\s]*)",
+    "headers": {"User-Agent": "Monitoror"}
   }
 }
         </code></pre>
@@ -1690,6 +1700,10 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
         <dd>
           Check if SSL certificate is valid, overrides core configuration
         </dd>
+        <dt><code>headers</code> <code class="type">object</code></dt>
+        <dd>
+          Additional HTTP headers sent with the request
+        </dd>
 
         <dt><code>regex</code> <code class="type">string</code></dt>
         <dd>
@@ -1714,7 +1728,8 @@ MO_MONITORABLE_HTTP_SSLVERIFY=true
   "params": {
     "url": "http://localhost/count",
     "format": "JSON",
-    "key": "sub.\"dotted.key\".[0]"
+    "key": "sub.\"dotted.key\".[0]",
+    "headers": {"User-Agent": "Monitoror"}
   }
 }
         </code></pre>

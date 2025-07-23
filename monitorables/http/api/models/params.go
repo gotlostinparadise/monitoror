@@ -11,6 +11,7 @@ type (
 		GetURL() (url string)
 		GetStatusCodes() (min int, max int)
 		GetSSLVerify() *bool
+		GetHeaders() map[string]string
 	}
 
 	RegexParamsProvider interface {
