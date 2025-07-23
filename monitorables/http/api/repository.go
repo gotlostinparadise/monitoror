@@ -8,6 +8,6 @@ import (
 
 type (
 	Repository interface {
-		Get(url string) (*models.Response, error)
+		Get(url string, sslVerify *bool) (*models.Response, error)
 	}
 )

@@ -14,6 +14,7 @@ type (
 		Regex         string `json:"regex,omitempty" query:"regex" validate:"regex"`
 		StatusCodeMin *int   `json:"statusCodeMin,omitempty" query:"statusCodeMin"`
 		StatusCodeMax *int   `json:"statusCodeMax,omitempty" query:"statusCodeMax"`
+		SSLVerify     *bool  `json:"sslVerify,omitempty" query:"sslVerify"`
 	}
 )
 
@@ -28,3 +29,4 @@ func (p *HTTPRawParams) GetStatusCodes() (min int, max int) {
 
 func (p *HTTPRawParams) GetRegex() string          { return p.Regex }
 func (p *HTTPRawParams) GetRegexp() *regexp.Regexp { return getRegexp(p.GetRegex()) }
+func (p *HTTPRawParams) GetSSLVerify() *bool       { return p.SSLVerify }

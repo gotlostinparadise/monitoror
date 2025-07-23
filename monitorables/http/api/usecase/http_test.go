@@ -20,7 +20,7 @@ import (
 
 func TestHTTPStatus_WithError(t *testing.T) {
 	mockRepository := new(mocks.Repository)
-	mockRepository.On("Get", AnythingOfType("string")).Return(nil, context.DeadlineExceeded)
+	mockRepository.On("Get", AnythingOfType("string"), Anything).Return(nil, context.DeadlineExceeded)
 	tu := NewHTTPUsecase(mockRepository, cache.NewGoCacheStore(time.Minute*5, time.Second), 2000)
 
 	tile, err := tu.HTTPStatus(&models.HTTPStatusParams{URL: "toto"})
@@ -145,7 +145,7 @@ func TestHtmlAll_WithoutErrors(t *testing.T) {
 		},
 	} {
 		mockRepository := new(mocks.Repository)
-		mockRepository.On("Get", AnythingOfType("string")).
+		mockRepository.On("Get", AnythingOfType("string"), Anything).
 			Return(&models.Response{StatusCode: 200, Body: []byte(testcase.body)}, nil)
 		tu := NewHTTPUsecase(mockRepository, cache.NewGoCacheStore(time.Minute*5, time.Second), 2000)
 
@@ -166,7 +166,7 @@ func TestHtmlAll_WithoutErrors(t *testing.T) {
 
 func TestHTTPStatus_WithCache(t *testing.T) {
 	mockRepository := new(mocks.Repository)
-	mockRepository.On("Get", AnythingOfType("string")).
+	mockRepository.On("Get", AnythingOfType("string"), Anything).
 		Return(&models.Response{StatusCode: 200, Body: []byte("test with cache")}, nil)
 
 	tu := NewHTTPUsecase(mockRepository, cache.NewGoCacheStore(time.Minute*5, time.Second), 2000)

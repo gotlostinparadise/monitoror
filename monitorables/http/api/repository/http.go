@@ -13,7 +13,9 @@ import (
 
 type (
 	httpRepository struct {
-		httpClient *http.Client
+		verifyClient *http.Client
+		skipClient   *http.Client
+		config       *config.HTTP
 	}
 )
 
@@ -28,16 +30,27 @@ func NewHTTPRepository(config *config.HTTP) api.Repository {
 		}
 	}
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.SSLVerify, Certificates: certificates},
-	}
-	client := &http.Client{Transport: tr, Timeout: time.Duration(config.Timeout) * time.Millisecond}
+	trVerify := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: false, Certificates: certificates}}
+	trSkip := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true, Certificates: certificates}}
 
-	return &httpRepository{client}
+	verifyClient := &http.Client{Transport: trVerify, Timeout: time.Duration(config.Timeout) * time.Millisecond}
+	skipClient := &http.Client{Transport: trSkip, Timeout: time.Duration(config.Timeout) * time.Millisecond}
+
+	return &httpRepository{verifyClient: verifyClient, skipClient: skipClient, config: config}
 }
 
-func (r *httpRepository) Get(url string) (response *models.Response, err error) {
-	resp, err := r.httpClient.Get(url)
+func (r *httpRepository) Get(url string, sslVerify *bool) (response *models.Response, err error) {
+	useVerify := r.config.SSLVerify
+	if sslVerify != nil {
+		useVerify = *sslVerify
+	}
+
+	client := r.verifyClient
+	if !useVerify {
+		client = r.skipClient
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return
 	}

@@ -11,6 +11,7 @@ type (
 		URL           string `json:"url" query:"url" validate:"required,url,http"`
 		StatusCodeMin *int   `json:"statusCodeMin,omitempty" query:"statusCodeMin"`
 		StatusCodeMax *int   `json:"statusCodeMax,omitempty" query:"statusCodeMax"`
+		SSLVerify     *bool  `json:"sslVerify,omitempty" query:"sslVerify"`
 	}
 )
 
@@ -22,3 +23,5 @@ func (p *HTTPStatusParams) GetURL() (url string) { return p.URL }
 func (p *HTTPStatusParams) GetStatusCodes() (min int, max int) {
 	return getStatusCodesWithDefault(p.StatusCodeMin, p.StatusCodeMax)
 }
+
+func (p *HTTPStatusParams) GetSSLVerify() *bool { return p.SSLVerify }
