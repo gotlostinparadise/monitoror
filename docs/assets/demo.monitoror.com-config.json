@@ -4,7 +4,7 @@
   "tiles": [
     { "type": "HTTP-STATUS", "label": "Monitoror.com", "params": { "url": "https://monitoror.com", "status": "SUCCESS" } },
     { "type": "PING", "label": "Ping GitHub.com", "params": { "hostname": "github.com", "status": "SUCCESS" } },
-    { "type": "PORT", "label": "bastion:22", "params": { "hostname": "bastion", "port": 22, "status": "SUCCESS" } },
+    { "type": "PORT", "label": "bastion:22", "params": { "hostname": "bastion", "port": 22, "type": "tcp", "status": "SUCCESS" } },
     { "type": "GROUP", "label": "Production nodes", "tiles": [
       { "type": "PING", "params": { "hostname": "prod1.monitoror.com", "status": "SUCCESS" } },
       { "type": "PING", "params": { "hostname": "prod2.monitoror.com", "status": "SUCCESS" } },
@@ -18,9 +18,9 @@
     { "type": "HTTP-FORMATTED", "label": "Active users", "params": { "format": "JSON", "url": "https://analytics.example.com/active-users", "key": ".count", "status": "SUCCESS", "valueValues": ["0.1337"], "valueUnit": "RATIO" } },
     { "type": "GROUP", "rowSpan": 2, "label": "QA nodes & deploy", "tiles": [
       { "type": "PING", "params": { "hostname": "qa1.monitoror.com", "status": "SUCCESS" } },
-      { "type": "PORT", "params": { "hostname": "qa1.monitoror.com", "port": 443, "status": "FAILURE" } },
+      { "type": "PORT", "params": { "hostname": "qa1.monitoror.com", "port": 443, "type": "tcp", "status": "FAILURE" } },
       { "type": "PING", "params": { "hostname": "qa1.monitoror.com", "status": "FAILURE" } },
-      { "type": "PORT", "params": { "hostname": "qa2.monitoror.com", "port": 443, "status": "FAILURE" } },
+      { "type": "PORT", "params": { "hostname": "qa2.monitoror.com", "port": 443, "type": "tcp", "status": "FAILURE" } },
       { "type": "GITHUB-CHECKS", "params": { "owner": "monitoror", "repository": "monitoror", "ref": "v5.0.4-qa.2", "status": "FAILURE" } }
     ]},
     { "type": "GROUP", "label": "CI builds in progress", "tiles": [

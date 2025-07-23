@@ -9,17 +9,17 @@ type Repository struct {
 	mock.Mock
 }
 
-// OpenSocket provides a mock function with given fields: hostname, port
-func (_m *Repository) OpenSocket(hostname string, port int) error {
-	ret := _m.Called(hostname, port)
+// OpenSocket provides a mock function with given fields: hostname, port, network
+func (_m *Repository) OpenSocket(hostname string, port int, network string) error {
+	ret := _m.Called(hostname, port, network)
 
 	if len(ret) == 0 {
 		panic("no return value specified for OpenSocket")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, int) error); ok {
-		r0 = rf(hostname, port)
+	if rf, ok := ret.Get(0).(func(string, int, string) error); ok {
+		r0 = rf(hostname, port, network)
 	} else {
 		r0 = ret.Error(0)
 	}

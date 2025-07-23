@@ -22,14 +22,22 @@ func NewPortRepository(conf *config.Port) api.Repository {
 	return &portRepository{conf, &net.Dialer{Timeout: timeout}}
 }
 
-func (r *portRepository) OpenSocket(hostname string, port int) (err error) {
+func (r *portRepository) OpenSocket(hostname string, port int, network string) (err error) {
 	target := fmt.Sprintf("%s:%d", hostname, port)
 
-	conn, err := r.dialer.Dial("tcp", target)
+	conn, err := r.dialer.Dial(network, target)
 	if err != nil {
 		return
 	}
 	if conn != nil {
+		if network == "udp" {
+			// try to write an empty datagram to validate connection
+			_, err = conn.Write([]byte{})
+			if err != nil {
+				_ = conn.Close()
+				return
+			}
+		}
 		_ = conn.Close()
 	}
 

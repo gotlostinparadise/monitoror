@@ -524,7 +524,7 @@ MO_CONFIG_PRODUCTION="/etc/monitoror/production.json"
     {
       "type": "PORT",
       "label": "Dev server",
-      "params": { "hostname": "127.0.0.1", "port": 8080 }
+      "params": { "hostname": "127.0.0.1", "port": 8080, "type": "tcp" }
     }
   ]
 }
@@ -2318,6 +2318,11 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
         <dd>
           Port to scan
         </dd>
+
+        <dt><code>type</code> <code class="type">string</code></dt>
+        <dd>
+          Protocol to use (<code>tcp</code> or <code>udp</code>). Default is <code>tcp</code>.
+        </dd>
       </dl>
 
       <div class="m-documentation--example-and-demo">
@@ -2326,7 +2331,8 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
   "type": "PORT",
   "params": {
     "hostname": "localhost",
-    "port": 443
+    "port": 443,
+    "type": "tcp"
   }
 }
         </code></pre>

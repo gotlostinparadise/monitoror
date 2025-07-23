@@ -34,7 +34,7 @@ func TestRepository_OpenSocket_Success(t *testing.T) {
 
 	repository := initRepository(t, mockDialer)
 	if repository != nil {
-		assert.NoError(t, repository.OpenSocket("test", 1234))
+		assert.NoError(t, repository.OpenSocket("test", 1234, "tcp"))
 		mockConn.AssertNumberOfCalls(t, "Close", 1)
 		mockConn.AssertExpectations(t)
 		mockDialer.AssertNumberOfCalls(t, "Dial", 1)
@@ -48,7 +48,7 @@ func TestRepository_OpenSocket_Failed(t *testing.T) {
 
 	repository := initRepository(t, mockDialer)
 	if repository != nil {
-		assert.Error(t, repository.OpenSocket("test", 1234))
+		assert.Error(t, repository.OpenSocket("test", 1234, "tcp"))
 		mockDialer.AssertNumberOfCalls(t, "Dial", 1)
 		mockDialer.AssertExpectations(t)
 	}
