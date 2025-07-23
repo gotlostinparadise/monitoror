@@ -37,6 +37,7 @@ func TestQueryParams_HTTPStatusParams(t *testing.T) {
 	ctx.QueryParams().Set("sslVerify", "false")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
+	ctx.QueryParams().Set("headers[User-Agent]", "Custom")
 
 	mockUsecase := new(mocks.Usecase)
 	mockUsecase.On("HTTPStatus", &models.HTTPStatusParams{
@@ -44,7 +45,7 @@ func TestQueryParams_HTTPStatusParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(false),
-		Headers:       nil,
+		Headers:       map[string]string{"User-Agent": "Custom"},
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPStatus(ctx))
@@ -57,6 +58,7 @@ func TestQueryParams_HTTPRawParams(t *testing.T) {
 	ctx.QueryParams().Set("sslVerify", "true")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
+	ctx.QueryParams().Set("headers[X-Test]", "yes")
 
 	mockUsecase := new(mocks.Usecase)
 	mockUsecase.On("HTTPRaw", &models.HTTPRawParams{
@@ -65,7 +67,7 @@ func TestQueryParams_HTTPRawParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(true),
-		Headers:       nil,
+		Headers:       map[string]string{"X-Test": "yes"},
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPRaw(ctx))
@@ -80,6 +82,7 @@ func TestQueryParams_HTTPFormattedParams(t *testing.T) {
 	ctx.QueryParams().Set("sslVerify", "false")
 	ctx.QueryParams().Set("statusCodeMin", "300")
 	ctx.QueryParams().Set("statusCodeMax", "400")
+	ctx.QueryParams().Set("headers[Test]", "1")
 
 	mockUsecase := new(mocks.Usecase)
 	mockUsecase.On("HTTPFormatted", &models.HTTPFormattedParams{
@@ -90,7 +93,7 @@ func TestQueryParams_HTTPFormattedParams(t *testing.T) {
 		StatusCodeMin: pointer.ToInt(300),
 		StatusCodeMax: pointer.ToInt(400),
 		SSLVerify:     pointer.ToBool(false),
-		Headers:       nil,
+		Headers:       map[string]string{"Test": "1"},
 	}).Return(nil, nil)
 	handler := NewHTTPDelivery(mockUsecase)
 	assert.NoError(t, handler.GetHTTPFormatted(ctx))
