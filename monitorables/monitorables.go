@@ -9,6 +9,7 @@ import (
 	"github.com/monitoror/monitoror/monitorables/ping"
 	"github.com/monitoror/monitoror/monitorables/pingdom"
 	"github.com/monitoror/monitoror/monitorables/port"
+	"github.com/monitoror/monitoror/monitorables/ssl"
 	"github.com/monitoror/monitoror/monitorables/travisci"
 	"github.com/monitoror/monitoror/store"
 )
@@ -30,6 +31,8 @@ func RegisterMonitorables(s *store.Store) {
 	s.Registry.RegisterMonitorable(pingdom.NewMonitorable(s))
 	// ------------ PORT ------------
 	s.Registry.RegisterMonitorable(port.NewMonitorable(s))
+	// ------------ SSL ------------
+	s.Registry.RegisterMonitorable(ssl.NewMonitorable(s))
 	// ------------ TRAVIS CI ------------
 	s.Registry.RegisterMonitorable(travisci.NewMonitorable(s))
 }

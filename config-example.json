@@ -4,5 +4,6 @@
   "tiles": [
     {"type": "PORT", "label": "Am I on fire?", "params": {"hostname": "127.0.0.1", "port": 8080}},
     {"type": "HTTP-STATUS", "label": "SSL certificate is valid", "params": { "url": "https://monitoror.com" }}
+    ,{"type": "SSL", "label": "Monitoror SSL", "params": {"hostname": "monitoror.com", "port": 443, "warnDays": 7}}
   ]
 }
