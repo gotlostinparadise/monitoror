@@ -33,6 +33,8 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 
 	status := su.computeStatus(params)
 	tile.Status = nonempty.Struct(params.Status, status).(coreModels.TileStatus)
+	remaining := su.computeRemainingDays(params.Hostname)
+	tile.Message = fmt.Sprintf("expires in %d days", remaining)
 	tile.Metrics.Values = []string{"", "", "issuer", "subject"}
 	return tile, nil
 }
@@ -43,4 +45,18 @@ func (su *sslUsecase) computeStatus(params *models.SSLParams) coreModels.TileSta
 		su.timeRefByHost[params.Hostname] = faker.GetRefTime()
 	}
 	return faker.ComputeStatus(value, availableStatuses)
+}
+
+func (su *sslUsecase) computeRemainingDays(hostname string) int {
+	value, ok := su.timeRefByHost[hostname]
+	if !ok {
+		su.timeRefByHost[hostname] = faker.GetRefTime()
+		value = su.timeRefByHost[hostname]
+	}
+	duration := faker.ComputeDuration(value, time.Hour*24*90)
+	remaining := 90 - int(duration.Hours()/24)
+	if remaining == 0 {
+		remaining = 90
+	}
+	return remaining
 }

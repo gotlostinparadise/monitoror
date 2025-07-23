@@ -26,6 +26,8 @@ func TestUsecase_SSL_Success(t *testing.T) {
 	eTile := coreModels.NewTile(api.SSLTileType).WithMetrics(coreModels.RawUnit)
 	eTile.Label = "example.com:443"
 	eTile.Status = coreModels.SuccessStatus
+	remaining := int(cert.NotAfter.Sub(time.Now()).Hours() / 24)
+	eTile.Message = fmt.Sprintf("expires in %d days", remaining)
 	eTile.Metrics.Values = []string{cert.NotBefore.Format(time.RFC3339), cert.NotAfter.Format(time.RFC3339), "issuer", "subject"}
 
 	rTile, err := usecase.SSL(param)
@@ -49,6 +51,8 @@ func TestUsecase_SSL_Warn(t *testing.T) {
 	eTile := coreModels.NewTile(api.SSLTileType).WithMetrics(coreModels.RawUnit)
 	eTile.Label = "example.com:443"
 	eTile.Status = coreModels.WarningStatus
+	remaining := int(cert.NotAfter.Sub(time.Now()).Hours() / 24)
+	eTile.Message = fmt.Sprintf("expires in %d days", remaining)
 	eTile.Metrics.Values = []string{cert.NotBefore.Format(time.RFC3339), cert.NotAfter.Format(time.RFC3339), "issuer", "subject"}
 
 	rTile, err := usecase.SSL(param)

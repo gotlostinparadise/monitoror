@@ -36,7 +36,17 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 		tile.Status = coreModels.SuccessStatus
 	}
 
+	// tile.Message = fmt.Sprintf("expires in %d days", remaining)
+	tile.Message = fmt.Sprintf(
+		"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
+		remaining,
+		cert.NotBefore.Format(time.RFC3339),
+		cert.NotAfter.Format(time.RFC3339),
+		cert.Issuer,
+	)
+
 	tile.WithMetrics(coreModels.RawUnit)
+	
 	tile.Metrics.Values = []string{
 		cert.NotBefore.Format(time.RFC3339),
 		cert.NotAfter.Format(time.RFC3339),
