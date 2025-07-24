@@ -4,6 +4,7 @@ package usecase
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	coreModels "github.com/monitoror/monitoror/models"
@@ -21,11 +22,12 @@ func NewSSLUsecase(repository api.Repository) api.Usecase {
 
 func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 	tile := coreModels.NewTile(api.SSLTileType)
-	tile.Label = fmt.Sprintf("%s:%d", params.Hostname, params.Port)
+	tile.Label = fmt.Sprintf("%s:%d", params.Domain, params.GetPort())
 
-	cert, err := su.repository.FetchCertificate(params.Hostname, params.Port)
+	cert, err := su.repository.FetchCertificate(params.Domain, params.GetPort())
 	if err != nil {
 		tile.Status = coreModels.FailedStatus
+		tile.Message = err.Error()
 		return tile, nil
 	}
 
@@ -36,17 +38,10 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 		tile.Status = coreModels.SuccessStatus
 	}
 
-	// tile.Message = fmt.Sprintf("expires in %d days", remaining)
-	tile.Message = fmt.Sprintf(
-		"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
-		remaining,
-		cert.NotBefore.Format(time.RFC3339),
-		cert.NotAfter.Format(time.RFC3339),
-		cert.Issuer,
-	)
+	tile.Message = buildMessage(params.Display, cert, remaining)
 
 	tile.WithMetrics(coreModels.RawUnit)
-	
+
 	tile.Metrics.Values = []string{
 		cert.NotBefore.Format(time.RFC3339),
 		cert.NotAfter.Format(time.RFC3339),
@@ -55,4 +50,34 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 	}
 
 	return tile, nil
+}
+
+func buildMessage(display string, cert *api.Certificate, remaining int) string {
+	if display == "" || display == "full" {
+		return fmt.Sprintf(
+			"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
+			remaining,
+			cert.NotBefore.Format(time.RFC3339),
+			cert.NotAfter.Format(time.RFC3339),
+			cert.Issuer,
+		)
+	}
+
+	var parts []string
+	for _, field := range strings.Split(display, ",") {
+		switch strings.ToLower(strings.TrimSpace(field)) {
+		case "remaining":
+			parts = append(parts, fmt.Sprintf("%d", remaining))
+		case "notbefore":
+			parts = append(parts, cert.NotBefore.Format(time.RFC3339))
+		case "notafter":
+			parts = append(parts, cert.NotAfter.Format(time.RFC3339))
+		case "issuer":
+			parts = append(parts, cert.Issuer)
+		case "subject":
+			parts = append(parts, cert.Subject)
+		}
+	}
+
+	return strings.Join(parts, " / ")
 }

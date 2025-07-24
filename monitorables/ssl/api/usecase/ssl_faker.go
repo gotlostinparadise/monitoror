@@ -4,6 +4,7 @@ package usecase
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/monitoror/monitoror/internal/pkg/monitorable/faker"
@@ -29,20 +30,26 @@ func NewSSLUsecase() api.Usecase {
 
 func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 	tile := coreModels.NewTile(api.SSLTileType).WithMetrics(coreModels.RawUnit)
-	tile.Label = fmt.Sprintf("%s:%d", params.Hostname, params.Port)
+	tile.Label = fmt.Sprintf("%s:%d", params.Domain, params.GetPort())
 
 	status := su.computeStatus(params)
 	tile.Status = nonempty.Struct(params.Status, status).(coreModels.TileStatus)
-	remaining := su.computeRemainingDays(params.Hostname)
-	tile.Message = fmt.Sprintf("expires in %d days", remaining)
+	remaining := su.computeRemainingDays(params.Domain)
+	cert := &api.Certificate{
+		NotBefore: time.Now().Add(-time.Hour),
+		NotAfter:  time.Now().Add(time.Hour * 24 * 90),
+		Issuer:    "issuer",
+		Subject:   "subject",
+	}
+	tile.Message = buildMessage(params.Display, cert, remaining)
 	tile.Metrics.Values = []string{"", "", "issuer", "subject"}
 	return tile, nil
 }
 
 func (su *sslUsecase) computeStatus(params *models.SSLParams) coreModels.TileStatus {
-	value, ok := su.timeRefByHost[params.Hostname]
+	value, ok := su.timeRefByHost[params.Domain]
 	if !ok {
-		su.timeRefByHost[params.Hostname] = faker.GetRefTime()
+		su.timeRefByHost[params.Domain] = faker.GetRefTime()
 	}
 	return faker.ComputeStatus(value, availableStatuses)
 }
@@ -59,4 +66,34 @@ func (su *sslUsecase) computeRemainingDays(hostname string) int {
 		remaining = 90
 	}
 	return remaining
+}
+
+func buildMessage(display string, cert *api.Certificate, remaining int) string {
+	if display == "" || display == "full" {
+		return fmt.Sprintf(
+			"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
+			remaining,
+			cert.NotBefore.Format(time.RFC3339),
+			cert.NotAfter.Format(time.RFC3339),
+			cert.Issuer,
+		)
+	}
+
+	var parts []string
+	for _, field := range strings.Split(display, ",") {
+		switch strings.ToLower(strings.TrimSpace(field)) {
+		case "remaining":
+			parts = append(parts, fmt.Sprintf("%d", remaining))
+		case "notbefore":
+			parts = append(parts, cert.NotBefore.Format(time.RFC3339))
+		case "notafter":
+			parts = append(parts, cert.NotAfter.Format(time.RFC3339))
+		case "issuer":
+			parts = append(parts, cert.Issuer)
+		case "subject":
+			parts = append(parts, cert.Subject)
+		}
+	}
+
+	return strings.Join(parts, " / ")
 }
