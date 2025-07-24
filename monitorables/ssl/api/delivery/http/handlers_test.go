@@ -24,7 +24,7 @@ func initEcho() (ctx echo.Context, res *httptest.ResponseRecorder) {
 	res = httptest.NewRecorder()
 	ctx = e.NewContext(req, res)
 
-	ctx.QueryParams().Set("hostname", "monitoror.example.com")
+	ctx.QueryParams().Set("domain", "monitoror.example.com")
 	ctx.QueryParams().Set("port", "443")
 	ctx.QueryParams().Set("warnDays", "10")
 
@@ -49,7 +49,7 @@ func TestDelivery_SSLHandler_Success(t *testing.T) {
 	tile.Status = coreModels.SuccessStatus
 
 	mockUsecase := new(mocks.Usecase)
-	mockUsecase.On("SSL", &models.SSLParams{Hostname: "monitoror.example.com", Port: 443, WarnDays: 10}).Return(tile, nil)
+	mockUsecase.On("SSL", &models.SSLParams{Domain: "monitoror.example.com", Port: 443, WarnDays: 10}).Return(tile, nil)
 	handler := NewSSLDelivery(mockUsecase)
 
 	jsonTile, err := json.Marshal(tile)
@@ -63,12 +63,8 @@ func TestDelivery_SSLHandler_Success(t *testing.T) {
 	}
 }
 
-func TestDelivery_SSLHandler_QueryParamsError_MissingHostname(t *testing.T) {
-	missingParam(t, "hostname")
-}
-
-func TestDelivery_SSLHandler_QueryParamsError_MissingPort(t *testing.T) {
-	missingParam(t, "port")
+func TestDelivery_SSLHandler_QueryParamsError_MissingDomain(t *testing.T) {
+	missingParam(t, "domain")
 }
 
 func TestDelivery_SSLHandler_QueryParamsError_MissingWarnDays(t *testing.T) {
