@@ -35,13 +35,21 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 		}
 	}
 
-	err = pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()), payload)
-	if err == nil {
-		tile.Status = coreModels.SuccessStatus
-	} else {
+	responding, duration, err := pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()), payload)
+	if err != nil {
 		tile.Status = coreModels.FailedStatus
 		err = nil
+		return
 	}
+
+	tile.Status = coreModels.SuccessStatus
+	tile.Message = "no response"
+	if responding {
+		tile.Message = "responding"
+	}
+
+	tile.WithMetrics(coreModels.MillisecondUnit)
+	tile.Metrics.Values = []string{fmt.Sprintf("%d", duration.Milliseconds())}
 
 	return
 }

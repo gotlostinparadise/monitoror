@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	coreModels "github.com/monitoror/monitoror/models"
 	"github.com/monitoror/monitoror/monitorables/port/api"
@@ -17,7 +18,7 @@ import (
 func TestUsecase_CheckPort_Success(t *testing.T) {
 	// Init
 	mockRepo := new(mocks.Repository)
-	mockRepo.On("OpenSocket", AnythingOfType("string"), AnythingOfType("int"), AnythingOfType("string"), Anything).Return(nil)
+	mockRepo.On("OpenSocket", AnythingOfType("string"), AnythingOfType("int"), AnythingOfType("string"), Anything).Return(true, time.Millisecond*50, nil)
 	usecase := NewPortUsecase(mockRepo)
 
 	// Params
@@ -27,9 +28,11 @@ func TestUsecase_CheckPort_Success(t *testing.T) {
 	}
 
 	// Expected
-	eTile := coreModels.NewTile(api.PortTileType)
+	eTile := coreModels.NewTile(api.PortTileType).WithMetrics(coreModels.MillisecondUnit)
 	eTile.Label = fmt.Sprintf("%s:%d", param.Hostname, param.Port)
 	eTile.Status = coreModels.SuccessStatus
+	eTile.Message = "responding"
+	eTile.Metrics.Values = []string{"50"}
 
 	// Test
 	rTile, err := usecase.Port(param)
@@ -44,7 +47,7 @@ func TestUsecase_CheckPort_Success(t *testing.T) {
 func TestUsecase_CheckPort_Fail(t *testing.T) {
 	// Init
 	mockRepo := new(mocks.Repository)
-	mockRepo.On("OpenSocket", AnythingOfType("string"), AnythingOfType("int"), AnythingOfType("string"), Anything).Return(errors.New("port error"))
+	mockRepo.On("OpenSocket", AnythingOfType("string"), AnythingOfType("int"), AnythingOfType("string"), Anything).Return(false, time.Millisecond*0, errors.New("port error"))
 	usecase := NewPortUsecase(mockRepo)
 
 	// Params
@@ -71,7 +74,7 @@ func TestUsecase_CheckPort_Fail(t *testing.T) {
 func TestUsecase_CheckPort_WithPayload(t *testing.T) {
 	mockRepo := new(mocks.Repository)
 	payload := []byte{0xde, 0xad}
-	mockRepo.On("OpenSocket", "monitoror.example.com", 1234, "udp", payload).Return(nil)
+	mockRepo.On("OpenSocket", "monitoror.example.com", 1234, "udp", payload).Return(true, time.Millisecond*10, nil)
 	usecase := NewPortUsecase(mockRepo)
 
 	param := &models.PortParams{
@@ -81,9 +84,11 @@ func TestUsecase_CheckPort_WithPayload(t *testing.T) {
 		Payload:  "dead",
 	}
 
-	eTile := coreModels.NewTile(api.PortTileType)
+	eTile := coreModels.NewTile(api.PortTileType).WithMetrics(coreModels.MillisecondUnit)
 	eTile.Label = fmt.Sprintf("%s:%d", param.Hostname, param.Port)
 	eTile.Status = coreModels.SuccessStatus
+	eTile.Message = "responding"
+	eTile.Metrics.Values = []string{"10"}
 
 	rTile, err := usecase.Port(param)
 
