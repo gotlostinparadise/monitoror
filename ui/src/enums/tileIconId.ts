@@ -4,6 +4,7 @@ export enum TileIconId {
   GitLab = 'gitlab',
   Group = 'group',
   Http = 'http',
+  SSL = 'ssl',
   Jenkins = 'jenkins',
   Ping = 'ping',
   Pingdom = 'pingdom',

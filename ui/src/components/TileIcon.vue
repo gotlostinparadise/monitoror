@@ -48,6 +48,9 @@ export default defineComponent({
         case TileType.HttpFormatted:
           return TileIconId.Http
 
+        case TileType.SSL:
+          return TileIconId.SSL
+
         case TileType.Ping:
           return TileIconId.Ping
 

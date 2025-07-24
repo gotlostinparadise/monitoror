@@ -43,10 +43,7 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 	tile.WithMetrics(coreModels.RawUnit)
 
 	tile.Metrics.Values = []string{
-		cert.NotBefore.Format(time.RFC3339),
-		cert.NotAfter.Format(time.RFC3339),
-		cert.Issuer,
-		cert.Subject,
+		fmt.Sprintf("Expires in %d days", remaining),
 	}
 
 	return tile, nil
@@ -55,11 +52,11 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 func buildMessage(display string, cert *api.Certificate, remaining int) string {
 	if display == "" || display == "full" {
 		return fmt.Sprintf(
-			"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
-			remaining,
+			"NotBefore: %s / NotAfter: %s / Issuer: %s / CN: %s",
 			cert.NotBefore.Format(time.RFC3339),
 			cert.NotAfter.Format(time.RFC3339),
 			cert.Issuer,
+			cert.Subject,
 		)
 	}
 
