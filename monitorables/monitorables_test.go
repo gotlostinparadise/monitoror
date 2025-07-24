@@ -11,9 +11,10 @@ import (
 	httpApi "github.com/monitoror/monitoror/monitorables/http/api"
 	jenkinsApi "github.com/monitoror/monitoror/monitorables/jenkins/api"
 	pingApi "github.com/monitoror/monitoror/monitorables/ping/api"
-	pingdomApi "github.com/monitoror/monitoror/monitorables/pingdom/api"
-	portApi "github.com/monitoror/monitoror/monitorables/port/api"
-	sslApi "github.com/monitoror/monitoror/monitorables/ssl/api"
+       pingdomApi "github.com/monitoror/monitoror/monitorables/pingdom/api"
+       portApi "github.com/monitoror/monitoror/monitorables/port/api"
+       dnsApi "github.com/monitoror/monitoror/monitorables/dns/api"
+       sslApi "github.com/monitoror/monitoror/monitorables/ssl/api"
 	travisCIApi "github.com/monitoror/monitoror/monitorables/travisci/api"
 	"github.com/monitoror/monitoror/registry"
 
@@ -56,8 +57,10 @@ func TestManager_RegisterMonitorables(t *testing.T) {
 	assert.NotNil(t, mr.GeneratorMetadata[coreModels.NewGeneratorTileType(pingdomApi.PingdomCheckTileType)])
 	assert.NotNil(t, mr.GeneratorMetadata[coreModels.NewGeneratorTileType(pingdomApi.PingdomTransactionCheckTileType)])
 	// ------------ PORT ------------
-	assert.NotNil(t, mr.TileMetadata[portApi.PortTileType])
-	// ------------ SSL ------------
+       assert.NotNil(t, mr.TileMetadata[portApi.PortTileType])
+       // ------------ DNS ------------
+       assert.NotNil(t, mr.TileMetadata[dnsApi.DNSTileType])
+       // ------------ SSL ------------
 	assert.NotNil(t, mr.TileMetadata[sslApi.SSLTileType])
 	// ------------ TRAVIS CI ------------
 	assert.NotNil(t, mr.TileMetadata[travisCIApi.TravisCIBuildTileType])
