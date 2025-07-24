@@ -2338,6 +2338,10 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
         <dd>
           Protocol to use (<code>tcp</code> or <code>udp</code>). Default is <code>tcp</code>.
         </dd>
+        <dt><code>payload</code> <code class="type">string</code></dt>
+        <dd>
+          Hex payload sent after connection is established
+        </dd>
       </dl>
 
       <div class="m-documentation--example-and-demo">
@@ -2347,7 +2351,8 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
   "params": {
     "hostname": "localhost",
     "port": 443,
-    "type": "tcp"
+    "type": "tcp",
+    "payload": "48656c6c6f"
   }
 }
         </code></pre>
@@ -2372,6 +2377,7 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
         </div>
       </div>
     </div>
+<p>The tile message reports if the port responded to the payload and the metrics display the response time in milliseconds.</p>
 
     <div class="m-documentation--block">
       <svg class="m-documentation--tile-icon" xmlns="http://www.w3.org/2000/svg">
