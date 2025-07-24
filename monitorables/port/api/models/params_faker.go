@@ -16,6 +16,7 @@ type (
 		Hostname string   `json:"hostname" query:"hostname"`
 		Port     int      `json:"port" query:"port"`
 		Type     PortType `json:"type,omitempty" query:"type"`
+		Payload  string   `json:"payload,omitempty" query:"payload"`
 
 		Status coreModels.TileStatus `json:"status" query:"status"`
 	}

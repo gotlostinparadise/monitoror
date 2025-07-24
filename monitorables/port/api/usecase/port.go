@@ -3,6 +3,7 @@
 package usecase
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	coreModels "github.com/monitoror/monitoror/models"
@@ -24,7 +25,17 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 	tile = coreModels.NewTile(api.PortTileType)
 	tile.Label = fmt.Sprintf("%s:%d", params.Hostname, params.Port)
 
-	err = pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()))
+	var payload []byte
+	if params.Payload != "" {
+		payload, err = hex.DecodeString(params.Payload)
+		if err != nil {
+			tile.Status = coreModels.FailedStatus
+			err = nil
+			return
+		}
+	}
+
+	err = pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()), payload)
 	if err == nil {
 		tile.Status = coreModels.SuccessStatus
 	} else {

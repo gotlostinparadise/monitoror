@@ -22,7 +22,7 @@ func NewPortRepository(conf *config.Port) api.Repository {
 	return &portRepository{conf, &net.Dialer{Timeout: timeout}}
 }
 
-func (r *portRepository) OpenSocket(hostname string, port int, network string) (err error) {
+func (r *portRepository) OpenSocket(hostname string, port int, network string, payload []byte) (err error) {
 	target := fmt.Sprintf("%s:%d", hostname, port)
 
 	conn, err := r.dialer.Dial(network, target)
@@ -30,7 +30,13 @@ func (r *portRepository) OpenSocket(hostname string, port int, network string) (
 		return
 	}
 	if conn != nil {
-		if network == "udp" {
+		if len(payload) > 0 {
+			_, err = conn.Write(payload)
+			if err != nil {
+				_ = conn.Close()
+				return
+			}
+		} else if network == "udp" {
 			// try to write an empty datagram to validate connection
 			_, err = conn.Write([]byte{})
 			if err != nil {
