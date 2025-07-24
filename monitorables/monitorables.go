@@ -1,8 +1,9 @@
 package monitorables
 
 import (
-	"github.com/monitoror/monitoror/monitorables/azuredevops"
-	"github.com/monitoror/monitoror/monitorables/github"
+       "github.com/monitoror/monitoror/monitorables/azuredevops"
+       "github.com/monitoror/monitoror/monitorables/dns"
+       "github.com/monitoror/monitoror/monitorables/github"
 	"github.com/monitoror/monitoror/monitorables/gitlab"
 	"github.com/monitoror/monitoror/monitorables/http"
 	"github.com/monitoror/monitoror/monitorables/jenkins"
@@ -28,10 +29,12 @@ func RegisterMonitorables(s *store.Store) {
 	// ------------ PING ------------
 	s.Registry.RegisterMonitorable(ping.NewMonitorable(s))
 	// ------------ PINGDOM ------------
-	s.Registry.RegisterMonitorable(pingdom.NewMonitorable(s))
-	// ------------ PORT ------------
-	s.Registry.RegisterMonitorable(port.NewMonitorable(s))
-	// ------------ SSL ------------
+       s.Registry.RegisterMonitorable(pingdom.NewMonitorable(s))
+       // ------------ PORT ------------
+       s.Registry.RegisterMonitorable(port.NewMonitorable(s))
+       // ------------ DNS ------------
+       s.Registry.RegisterMonitorable(dns.NewMonitorable(s))
+       // ------------ SSL ------------
 	s.Registry.RegisterMonitorable(ssl.NewMonitorable(s))
 	// ------------ TRAVIS CI ------------
 	s.Registry.RegisterMonitorable(travisci.NewMonitorable(s))
