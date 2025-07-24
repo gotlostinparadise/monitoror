@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"time"
 
@@ -22,24 +23,42 @@ func NewPortRepository(conf *config.Port) api.Repository {
 	return &portRepository{conf, &net.Dialer{Timeout: timeout}}
 }
 
-func (r *portRepository) OpenSocket(hostname string, port int, network string) (err error) {
+func (r *portRepository) OpenSocket(hostname string, port int, network string, payload []byte) (responding bool, duration time.Duration, err error) {
+	start := time.Now()
 	target := fmt.Sprintf("%s:%d", hostname, port)
 
 	conn, err := r.dialer.Dial(network, target)
 	if err != nil {
-		return
+		return false, time.Since(start), err
 	}
-	if conn != nil {
-		if network == "udp" {
-			// try to write an empty datagram to validate connection
-			_, err = conn.Write([]byte{})
-			if err != nil {
-				_ = conn.Close()
-				return
-			}
+	if conn == nil {
+		return false, time.Since(start), fmt.Errorf("no connection")
+	}
+	defer conn.Close()
+
+	deadline := time.Now().Add(time.Millisecond * time.Duration(r.config.Timeout))
+	_ = conn.SetDeadline(deadline)
+
+	if len(payload) > 0 {
+		if _, err = conn.Write(payload); err != nil {
+			return false, time.Since(start), err
 		}
-		_ = conn.Close()
+	} else if network == "udp" {
+		// send empty datagram to validate connection
+		if _, err = conn.Write([]byte{}); err != nil {
+			return false, time.Since(start), err
+		}
 	}
 
-	return nil
+	buf := make([]byte, 1)
+	_, err = conn.Read(buf)
+	duration = time.Since(start)
+	if err == nil || err == io.EOF {
+		responding = true
+		err = nil
+	} else if ne, ok := err.(net.Error); ok && ne.Timeout() {
+		err = nil
+	}
+
+	return
 }

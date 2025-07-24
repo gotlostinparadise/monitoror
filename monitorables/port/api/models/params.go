@@ -15,6 +15,7 @@ type (
 		Hostname string   `json:"hostname" query:"hostname" validate:"required"`
 		Port     int      `json:"port" query:"port" validate:"required,gt=0"`
 		Type     PortType `json:"type,omitempty" query:"type" validate:"omitempty,oneof=tcp udp"`
+		Payload  string   `json:"payload,omitempty" query:"payload" validate:"omitempty,hexadecimal"`
 	}
 )
 
