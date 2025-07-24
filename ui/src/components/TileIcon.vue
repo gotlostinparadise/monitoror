@@ -51,6 +51,9 @@ export default defineComponent({
         case TileType.SSL:
           return TileIconId.SSL
 
+        case TileType.DNS:
+          return TileIconId.DNS
+
         case TileType.Ping:
           return TileIconId.Ping
 
