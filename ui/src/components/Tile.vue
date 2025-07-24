@@ -313,7 +313,6 @@ export default defineComponent({
   .c-monitoror-tile--message,
   .c-monitoror-tile--value {
     padding-top: 5px;
-    font-size: 24px;
     opacity: 0.8;
   }
 
