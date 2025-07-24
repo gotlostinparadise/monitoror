@@ -341,7 +341,7 @@ export default defineComponent({
     left: 50%;
     padding-top: 25px;
     text-align: center;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
     transform: translate(-50%, -50%);
   }
