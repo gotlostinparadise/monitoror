@@ -64,12 +64,14 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 
 	// Look for any expire-related line. Examples include:
 	// "Expiry Date: 2026-06-07" or "Record expires on: Fri Oct 21 05:54:20 2033"
-	re := regexp.MustCompile(`(?i)(?:expiry|expiration|expires?)\s*(?:date|on)?\s*:\s*(.+)`)
+	re := regexp.MustCompile(`(?i)^\s*(?:record|domain|registrar|registry)?\s*(?:registration\s+)?(?:expir(?:ation|es?|y|e)|paid[- ]?till)\b\s*(?:date|on)?\s*[:-]?\s*(.+?)\s*$`)
+
 	scanner = bufio.NewScanner(strings.NewReader(out))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if m := re.FindStringSubmatch(line); m != nil {
 			dateStr := strings.TrimSpace(m[1])
+	
 			layouts := []string{
 				time.RFC3339,
 				"2006-01-02T15:04:05Z",
@@ -77,13 +79,16 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 				"2006-01-02T15:04:05Z07:00",
 				"2006-01-02 15:04:05-07",
 				"2006-01-02",
+				"Mon Jan 02 15:04:05 2006",   // <‑‑ NEW: handles “Fri Oct 21 05:54:20 2033”
 			}
+	
 			for _, l := range layouts {
-				if t, e := time.Parse(l, dateStr); e == nil {
-					return t, nil
+				if t, err := time.Parse(l, dateStr); err == nil {
+					return t.UTC(), nil           // normalise to UTC
 				}
 			}
 		}
 	}
+	
 	return time.Time{}, fmt.Errorf("expiration date not found")
 }
