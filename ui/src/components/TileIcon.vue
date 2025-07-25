@@ -54,6 +54,9 @@ export default defineComponent({
         case TileType.DNS:
           return TileIconId.DNS
 
+        case TileType.WHOIS:
+          return TileIconId.WHOIS
+
         case TileType.Ping:
           return TileIconId.Ping
 
