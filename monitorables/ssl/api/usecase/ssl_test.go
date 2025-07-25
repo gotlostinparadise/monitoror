@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -27,8 +28,8 @@ func TestUsecase_SSL_Success(t *testing.T) {
 	eTile.Label = "example.com:443"
 	eTile.Status = coreModels.SuccessStatus
 	remaining := int(cert.NotAfter.Sub(time.Now()).Hours() / 24)
-	eTile.Message = buildMessage("full", cert, remaining)
-	eTile.Metrics.Values = []string{cert.NotBefore.Format(time.RFC3339), cert.NotAfter.Format(time.RFC3339), "issuer", "subject"}
+	eTile.Message = ""
+	eTile.Metrics.Values = []string{fmt.Sprintf("Expires in %d days", remaining)}
 
 	rTile, err := usecase.SSL(param)
 
@@ -52,8 +53,8 @@ func TestUsecase_SSL_Warn(t *testing.T) {
 	eTile.Label = "example.com:443"
 	eTile.Status = coreModels.WarningStatus
 	remaining := int(cert.NotAfter.Sub(time.Now()).Hours() / 24)
-	eTile.Message = buildMessage("full", cert, remaining)
-	eTile.Metrics.Values = []string{cert.NotBefore.Format(time.RFC3339), cert.NotAfter.Format(time.RFC3339), "issuer", "subject"}
+	eTile.Message = ""
+	eTile.Metrics.Values = []string{fmt.Sprintf("Expires in %d days", remaining)}
 
 	rTile, err := usecase.SSL(param)
 
@@ -99,6 +100,24 @@ func TestUsecase_SSL_CustomDisplay(t *testing.T) {
 
 	if assert.NoError(t, err) {
 		assert.Equal(t, "issuer", tile.Message)
+		mockRepo.AssertNumberOfCalls(t, "FetchCertificate", 1)
+		mockRepo.AssertExpectations(t)
+	}
+}
+
+func TestUsecase_SSL_DisplayNone(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+	cert := &api.Certificate{NotBefore: time.Now(), NotAfter: time.Now().Add(48 * time.Hour), Issuer: "issuer", Subject: "subject"}
+	mockRepo.On("FetchCertificate", AnythingOfType("string"), AnythingOfType("int")).Return(cert, nil)
+
+	usecase := NewSSLUsecase(mockRepo)
+
+	param := &models.SSLParams{Domain: "example.com", Port: 443, WarnDays: 1, Display: "none"}
+
+	tile, err := usecase.SSL(param)
+
+	if assert.NoError(t, err) {
+		assert.Empty(t, tile.Message)
 		mockRepo.AssertNumberOfCalls(t, "FetchCertificate", 1)
 		mockRepo.AssertExpectations(t)
 	}

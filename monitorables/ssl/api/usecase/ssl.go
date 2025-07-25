@@ -50,7 +50,13 @@ func (su *sslUsecase) SSL(params *models.SSLParams) (*coreModels.Tile, error) {
 }
 
 func buildMessage(display string, cert *api.Certificate, remaining int) string {
-	if display == "" || display == "full" {
+	d := strings.ToLower(strings.TrimSpace(display))
+
+	if d == "" || d == "none" {
+		return ""
+	}
+
+	if d == "full" {
 		return fmt.Sprintf(
 			"NotBefore: %s / NotAfter: %s / Issuer: %s / CN: %s",
 			cert.NotBefore.Format(time.RFC3339),
