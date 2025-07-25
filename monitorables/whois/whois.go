@@ -29,6 +29,9 @@ func NewMonitorable(store *store.Store) *Monitorable {
 	m.config = make(map[coreModels.VariantName]*struct{})
 
 	pkgMonitorable.LoadConfig(&m.config, &struct{}{})
+	if len(m.config) == 0 {
+		m.config[coreModels.DefaultVariantName] = &struct{}{}
+	}
 
 	m.whoisTileEnabler = store.Registry.RegisterTile(api.WHOISTileType, versions.MinimalVersion, m.GetVariantsNames())
 
