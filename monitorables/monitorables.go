@@ -10,6 +10,7 @@ import (
 	"github.com/monitoror/monitoror/monitorables/ping"
 	"github.com/monitoror/monitoror/monitorables/pingdom"
 	"github.com/monitoror/monitoror/monitorables/port"
+	"github.com/monitoror/monitoror/monitorables/rtsp"
 	"github.com/monitoror/monitoror/monitorables/ssl"
 	"github.com/monitoror/monitoror/monitorables/travisci"
 	"github.com/monitoror/monitoror/monitorables/whois"
@@ -33,6 +34,8 @@ func RegisterMonitorables(s *store.Store) {
 	s.Registry.RegisterMonitorable(pingdom.NewMonitorable(s))
 	// ------------ PORT ------------
 	s.Registry.RegisterMonitorable(port.NewMonitorable(s))
+	// ------------ RTSP ------------
+	s.Registry.RegisterMonitorable(rtsp.NewMonitorable(s))
 	// ------------ DNS ------------
 	s.Registry.RegisterMonitorable(dns.NewMonitorable(s))
 	// ------------ SSL ------------
