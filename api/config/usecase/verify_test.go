@@ -197,6 +197,16 @@ func TestUsecase_VerifyTile_Success_Group(t *testing.T) {
 	assert.Len(t, conf.Errors, 0)
 }
 
+func TestUsecase_VerifyTile_SSLDisplayEmpty(t *testing.T) {
+	rawConfig := `{ "type": "SSL", "params": { "domain": "example.com", "warnDays": 1, "display": "" } }`
+
+	tile, conf := initConfig(t, rawConfig)
+	usecase := initConfigUsecase(nil)
+	usecase.verifyTile(conf, tile, nil)
+
+	assert.Len(t, conf.Errors, 0)
+}
+
 func TestUsecase_VerifyTile_Failed(t *testing.T) {
 	for _, testcase := range []struct {
 		rawConfig string

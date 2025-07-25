@@ -13,7 +13,7 @@ type (
 		Domain   string `json:"domain" query:"domain" validate:"required"`
 		Port     int    `json:"port,omitempty" query:"port" validate:"omitempty,gt=0"`
 		WarnDays int    `json:"warnDays" query:"warnDays" validate:"required,gte=0"`
-		Display  string `json:"display,omitempty" query:"display"`
+		Display  string `json:"display" query:"display"`
 	}
 )
 
