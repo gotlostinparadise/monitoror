@@ -69,7 +69,13 @@ func (su *sslUsecase) computeRemainingDays(hostname string) int {
 }
 
 func buildMessage(display string, cert *api.Certificate, remaining int) string {
-	if display == "" || display == "full" {
+	d := strings.ToLower(strings.TrimSpace(display))
+
+	if d == "" || d == "none" {
+		return ""
+	}
+
+	if d == "full" {
 		return fmt.Sprintf(
 			"Expires in %d days / NotBefore: %s / NotAfter: %s / Issuer: %s",
 			remaining,
