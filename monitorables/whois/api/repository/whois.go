@@ -62,12 +62,14 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	re := regexp.MustCompile(`(?i)(expiry|expiration) date:\s*(.+)`) // capture
+	// Look for any expire-related line. Examples include:
+	// "Expiry Date: 2026-06-07" or "Record expires on: Fri Oct 21 05:54:20 2033"
+	re := regexp.MustCompile(`(?i)(?:expiry|expiration|expires?)\s*(?:date|on)?\s*:\s*(.+)`)
 	scanner = bufio.NewScanner(strings.NewReader(out))
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if m := re.FindStringSubmatch(line); m != nil {
-			dateStr := strings.TrimSpace(m[2])
+			dateStr := strings.TrimSpace(m[1])
 			layouts := []string{
 				time.RFC3339,
 				"2006-01-02T15:04:05Z",
