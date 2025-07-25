@@ -2340,7 +2340,11 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
         </dd>
         <dt><code>payload</code> <code class="type">string</code></dt>
         <dd>
-          Hex payload sent after connection is established
+          Payload sent after connection is established. Use the <code>0x</code> prefix for hexadecimal data or escape sequences like <code>\n</code> and <code>\xFF</code>.
+        </dd>
+        <dt><code>display</code> <code class="type">string</code></dt>
+        <dd>
+          Optional regular expression used to extract information from the service banner.
         </dd>
       </dl>
 
@@ -2352,7 +2356,8 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
     "hostname": "localhost",
     "port": 443,
     "type": "tcp",
-    "payload": "48656c6c6f"
+    "payload": "0x48656c6c6f",
+    "display": "SSH-2.0-(.*)"
   }
 }
         </code></pre>

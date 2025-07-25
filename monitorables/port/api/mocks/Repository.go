@@ -13,7 +13,7 @@ type Repository struct {
 }
 
 // OpenSocket provides a mock function with given fields: hostname, port, network
-func (_m *Repository) OpenSocket(hostname string, port int, network string, payload []byte) (bool, time.Duration, error) {
+func (_m *Repository) OpenSocket(hostname string, port int, network string, payload []byte) (bool, string, time.Duration, error) {
 	ret := _m.Called(hostname, port, network, payload)
 
 	if len(ret) == 0 {
@@ -21,9 +21,10 @@ func (_m *Repository) OpenSocket(hostname string, port int, network string, payl
 	}
 
 	var r0 bool
-	var r1 time.Duration
-	var r2 error
-	if rf, ok := ret.Get(0).(func(string, int, string, []byte) (bool, time.Duration, error)); ok {
+	var r1 string
+	var r2 time.Duration
+	var r3 error
+	if rf, ok := ret.Get(0).(func(string, int, string, []byte) (bool, string, time.Duration, error)); ok {
 		return rf(hostname, port, network, payload)
 	}
 	if rf, ok := ret.Get(0).(func(string, int, string, []byte) bool); ok {
@@ -31,20 +32,27 @@ func (_m *Repository) OpenSocket(hostname string, port int, network string, payl
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
-	if rf, ok := ret.Get(1).(func(string, int, string, []byte) time.Duration); ok {
+	if rf, ok := ret.Get(1).(func(string, int, string, []byte) string); ok {
 		r1 = rf(hostname, port, network, payload)
 	} else {
 		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(time.Duration)
+			r1 = ret.Get(1).(string)
 		}
 	}
-	if rf, ok := ret.Get(2).(func(string, int, string, []byte) error); ok {
+	if rf, ok := ret.Get(2).(func(string, int, string, []byte) time.Duration); ok {
 		r2 = rf(hostname, port, network, payload)
 	} else {
-		r2 = ret.Error(2)
+		if ret.Get(2) != nil {
+			r2 = ret.Get(2).(time.Duration)
+		}
+	}
+	if rf, ok := ret.Get(3).(func(string, int, string, []byte) error); ok {
+		r3 = rf(hostname, port, network, payload)
+	} else {
+		r3 = ret.Error(3)
 	}
 
-	return r0, r1, r2
+	return r0, r1, r2, r3
 }
 
 // NewRepository creates a new instance of Repository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
