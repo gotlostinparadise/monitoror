@@ -23,16 +23,16 @@ func NewPortRepository(conf *config.Port) api.Repository {
 	return &portRepository{conf, &net.Dialer{Timeout: timeout}}
 }
 
-func (r *portRepository) OpenSocket(hostname string, port int, network string, payload []byte) (responding bool, duration time.Duration, err error) {
+func (r *portRepository) OpenSocket(hostname string, port int, network string, payload []byte) (responding bool, banner string, duration time.Duration, err error) {
 	start := time.Now()
 	target := fmt.Sprintf("%s:%d", hostname, port)
 
 	conn, err := r.dialer.Dial(network, target)
 	if err != nil {
-		return false, time.Since(start), err
+		return false, "", time.Since(start), err
 	}
 	if conn == nil {
-		return false, time.Since(start), fmt.Errorf("no connection")
+		return false, "", time.Since(start), fmt.Errorf("no connection")
 	}
 	defer conn.Close()
 
@@ -41,18 +41,21 @@ func (r *portRepository) OpenSocket(hostname string, port int, network string, p
 
 	if len(payload) > 0 {
 		if _, err = conn.Write(payload); err != nil {
-			return false, time.Since(start), err
+			return false, "", time.Since(start), err
 		}
 	} else if network == "udp" {
 		// send empty datagram to validate connection
 		if _, err = conn.Write([]byte{}); err != nil {
-			return false, time.Since(start), err
+			return false, "", time.Since(start), err
 		}
 	}
 
-	buf := make([]byte, 1)
-	_, err = conn.Read(buf)
+	buf := make([]byte, 4096)
+	n, err := conn.Read(buf)
 	duration = time.Since(start)
+	if n > 0 {
+		banner = string(buf[:n])
+	}
 	if err == nil || err == io.EOF {
 		responding = true
 		err = nil

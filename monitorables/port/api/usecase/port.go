@@ -5,6 +5,8 @@ package usecase
 import (
 	"encoding/hex"
 	"fmt"
+	"regexp"
+	"strconv"
 
 	coreModels "github.com/monitoror/monitoror/models"
 	"github.com/monitoror/monitoror/monitorables/port/api"
@@ -27,7 +29,13 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 
 	var payload []byte
 	if params.Payload != "" {
-		payload, err = hex.DecodeString(params.Payload)
+		if matched, _ := regexp.MatchString(`^0x[0-9a-fA-F]+$`, params.Payload); matched {
+			payload, err = hex.DecodeString(params.Payload[2:])
+		} else {
+			var s string
+			s, err = strconv.Unquote("\"" + params.Payload + "\"")
+			payload = []byte(s)
+		}
 		if err != nil {
 			tile.Status = coreModels.FailedStatus
 			err = nil
@@ -35,7 +43,7 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 		}
 	}
 
-	responding, duration, err := pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()), payload)
+	responding, banner, duration, err := pu.repository.OpenSocket(params.Hostname, params.Port, string(params.GetType()), payload)
 	if err != nil {
 		tile.Status = coreModels.FailedStatus
 		err = nil
@@ -46,6 +54,18 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 	tile.Message = "no response"
 	if responding {
 		tile.Message = "responding"
+	}
+
+	if params.Display != "" && banner != "" {
+		if re, e := regexp.Compile(params.Display); e == nil {
+			if m := re.FindStringSubmatch(banner); m != nil {
+				if len(m) > 1 {
+					tile.Message = m[1]
+				} else {
+					tile.Message = m[0]
+				}
+			}
+		}
 	}
 
 	tile.WithMetrics(coreModels.MillisecondUnit)
