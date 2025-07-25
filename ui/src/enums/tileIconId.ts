@@ -6,6 +6,7 @@ export enum TileIconId {
   Http = 'http',
   SSL = 'ssl',
   DNS = 'dns',
+  WHOIS = 'whois',
   Jenkins = 'jenkins',
   Ping = 'ping',
   Pingdom = 'pingdom',
