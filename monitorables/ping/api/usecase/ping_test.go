@@ -45,6 +45,31 @@ func TestUsecase_Ping_Success(t *testing.T) {
 	}
 }
 
+func TestUsecase_Ping_SubMillisecond(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+	mockRepo.On("ExecutePing", AnythingOfType("string")).Return(&models.Ping{
+		Average: 500 * time.Microsecond,
+		Min:     500 * time.Microsecond,
+		Max:     500 * time.Microsecond,
+	}, nil)
+	usecase := NewPingUsecase(mockRepo)
+
+	param := &models.PingParams{Hostname: "monitoror.example.com"}
+
+	eTile := coreModels.NewTile(api.PingTileType).WithMetrics(coreModels.MillisecondUnit)
+	eTile.Label = param.Hostname
+	eTile.Status = coreModels.SuccessStatus
+	eTile.Metrics.Values = append(eTile.Metrics.Values, "0.50")
+
+	rTile, err := usecase.Ping(param)
+
+	if assert.NoError(t, err) {
+		assert.Equal(t, eTile, rTile)
+		mockRepo.AssertNumberOfCalls(t, "ExecutePing", 1)
+		mockRepo.AssertExpectations(t)
+	}
+}
+
 func TestUsecase_Ping_Fail(t *testing.T) {
 	// Init
 	mockRepo := new(mocks.Repository)
