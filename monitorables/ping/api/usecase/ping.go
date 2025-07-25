@@ -4,6 +4,7 @@ package usecase
 
 import (
 	"fmt"
+	"time"
 
 	coreModels "github.com/monitoror/monitoror/models"
 	"github.com/monitoror/monitoror/monitorables/ping/api"
@@ -28,7 +29,12 @@ func (pu *pingUsecase) Ping(params *models.PingParams) (tile *coreModels.Tile, e
 	if err == nil {
 		tile.Status = coreModels.SuccessStatus
 		tile.WithMetrics(coreModels.MillisecondUnit)
-		tile.Metrics.Values = append(tile.Metrics.Values, fmt.Sprintf("%d", ping.Average.Milliseconds()))
+		if ping.Average < time.Millisecond {
+			ms := float64(ping.Average.Nanoseconds()) / float64(time.Millisecond)
+			tile.Metrics.Values = append(tile.Metrics.Values, fmt.Sprintf("%.2f", ms))
+		} else {
+			tile.Metrics.Values = append(tile.Metrics.Values, fmt.Sprintf("%d", ping.Average.Milliseconds()))
+		}
 	} else {
 		tile.Status = coreModels.FailedStatus
 		err = nil
