@@ -2,6 +2,7 @@ export enum TileType {
   SSL = 'SSL',
   DNS = 'DNS',
   WHOIS = 'WHOIS',
+  RTSP = 'RTSP',
   HttpStatus = 'HTTP-STATUS',
   HttpRaw = 'HTTP-RAW',
   HttpFormatted = 'HTTP-FORMATTED',

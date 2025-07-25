@@ -57,6 +57,9 @@ export default defineComponent({
         case TileType.WHOIS:
           return TileIconId.WHOIS
 
+        case TileType.RTSP:
+          return TileIconId.RTSP
+
         case TileType.Ping:
           return TileIconId.Ping
 
