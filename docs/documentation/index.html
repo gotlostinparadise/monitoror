@@ -172,6 +172,17 @@
             </ul>
           </li>
           <li>
+            <a href="#rtsp">
+              <svg class="m-documentation--menu-icon" xmlns="http://www.w3.org/2000/svg">
+                <use xlink:href="/assets/images/icons.svg#rtsp"/>
+              </svg>
+              RTSP
+            </a>
+            <ul>
+              <li><a href="#tile-rtsp">RTSP</a></li>
+            </ul>
+          </li>
+          <li>
             <a href="#travis-ci">
               <svg class="m-documentation--menu-icon" xmlns="http://www.w3.org/2000/svg">
                 <use xlink:href="/assets/images/icons.svg#travis-ci"/>
@@ -333,6 +344,26 @@
             </svg>
           </span>
         </a>
+        <a href="#rtsp" class="m-documentation-card">
+          <span class="m-documentation-card--mask">
+            <span class="m-documentation-card--title">RTSP</span>
+
+            <svg class="m-documentation-card--icon" xmlns="http://www.w3.org/2000/svg">
+              <use xlink:href="/assets/images/icons.svg#rtsp"/>
+            </svg>
+          </span>
+        </a>
+          <li>
+            <a href="#rtsp">
+              <svg class="m-documentation--menu-icon" xmlns="http://www.w3.org/2000/svg">
+                <use xlink:href="/assets/images/icons.svg#rtsp"/>
+              </svg>
+              RTSP
+            </a>
+            <ul>
+              <li><a href="#tile-rtsp">RTSP</a></li>
+            </ul>
+          </li>
         <a href="#travis-ci" class="m-documentation-card">
           <span class="m-documentation-card--mask">
             <span class="m-documentation-card--title">Travis CI</span>
@@ -2383,6 +2414,147 @@ MO_MONITORABLE_PORT_TIMEOUT=1000
       </div>
     </div>
 <p>The tile message reports if the port responded to the payload and the metrics display the response time in milliseconds.</p>
+
+    <div class="m-documentation--block">
+    <div class="m-documentation--block">
+      <svg class="m-documentation--tile-icon" xmlns="http://www.w3.org/2000/svg">
+        <use xlink:href="/assets/images/icons.svg#rtsp"/>
+      </svg>
+
+      <h3 id="rtsp">RTSP</h3>
+
+      <p>
+        Authenticate to an RTSP server using digest authentication.
+      </p>
+
+      <h5 class="m-documentation--configuration-side-title">Core configuration</h5>
+
+      <dl>
+        <dt><code>MO_MONITORABLE_RTSP_TIMEOUT</code> <code class="type">number</code></dt>
+        <dd>
+          Timeout in milliseconds before returning error <br>
+          <span class="tag">Default:</span> <code>2000</code>
+        </dd>
+      </dl>
+
+      <p class="success-block">
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <use xlink:href="/assets/images/icons.svg#configuration-variants"/>
+        </svg>
+        <a href="#configuration-variants">Configuration Variants</a> are available for RTSP
+      </p>
+
+      <pre class="example"><code>
+MO_MONITORABLE_RTSP_TIMEOUT=2000
+      </code></pre>
+
+      <h4 id="tile-rtsp">RTSP</h4>
+
+      <p>
+        Try to authenticate using RTSP Digest with provided credentials.
+      </p>
+
+      <h5 class="m-documentation--configuration-side-title">UI configuration</h5>
+
+      <dl>
+        <dt><code>hostname</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Hostname of the RTSP server</dd>
+        <dt><code>port</code> <code class="type">number</code> <span class="required">required</span></dt>
+        <dd>TCP port of the RTSP server</dd>
+        <dt><code>path</code> <code class="type">string</code></dt>
+        <dd>Stream path to authenticate (default <code>/</code>)</dd>
+        <dt><code>username</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Username for authentication</dd>
+        <dt><code>password</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Password for authentication</dd>
+        <dt><code>method</code> <code class="type">string</code></dt>
+        <dd>RTSP method used for requests. Default is <code>OPTIONS</code>.</dd>
+      </dl>
+
+      <div class="m-documentation--example-and-demo">
+        <pre class="example"><code class="language-json">
+{
+  "type": "RTSP",
+  "params": {
+    "hostname": "camera.local",
+    "port": 554,
+    "path": "/",
+    "username": "admin",
+    "password": "password"
+  }
+}
+        </code></pre>
+
+        <div class="m-documentation--demo">
+          <div class="m-documentation--demo-tile">
+            <div class="m-documentation--demo-label">camera.local:554</div>
+            <svg class="m-documentation--demo-icon" xmlns="http://www.w3.org/2000/svg">
+              <use xlink:href="/assets/images/icons.svg#rtsp"/>
+            </svg>
+          </div>
+          <div class="m-documentation--demo-switch">
+            <label class="m-documentation--demo-switch-label m-documentation--demo-switch-succeeded">
+              <input data-state-switch name="rtsp-state" type="radio" value="succeeded">
+              Success
+            </label>
+            <label class="m-documentation--demo-switch-label m-documentation--demo-switch-error">
+              <input data-state-switch name="rtsp-state" type="radio" value="error">
+              Error
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+      <svg class="m-documentation--tile-icon" xmlns="http://www.w3.org/2000/svg">
+        <use xlink:href="/assets/images/icons.svg#rtsp"/>
+      </svg>
+
+      <h3 id="rtsp">RTSP</h3>
+
+      <p>
+        Authenticate to an RTSP server using digest authentication.
+      </p>
+
+      <h5 class="m-documentation--configuration-side-title">Core configuration</h5>
+
+      <dl>
+        <dt><code>MO_MONITORABLE_RTSP_TIMEOUT</code> <code class="type">number</code></dt>
+        <dd>
+          Timeout in milliseconds before returning error <br>
+          <span class="tag">Default:</span> <code>2000</code>
+        </dd>
+      </dl>
+
+      <p class="success-block">
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <use xlink:href="/assets/images/icons.svg#configuration-variants"/>
+        </svg>
+        <a href="#configuration-variants">Configuration Variants</a> are available for RTSP
+      </p>
+
+      <pre class="example"><code>
+MO_MONITORABLE_RTSP_TIMEOUT=2000
+      </code></pre>
+
+      <h4 id="tile-rtsp">RTSP</h4>
+
+      <p>
+        Try to authenticate using RTSP Digest with provided credentials.
+      </p>
+
+      <h5 class="m-documentation--configuration-side-title">UI configuration</h5>
+
+      <dl>
+        <dt><code>hostname</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Hostname of the RTSP server</dd>
+        <dt><code>port</code> <code class="type">number</code> <span class="required">required</span></dt>
+        <dd>TCP port of the RTSP server</dd>
+        <dt><code>path</code> <code class="type">string</code></dt>
+        <dd>Stream path to authenticate (default <code>/</code>)</dd>
+        <dt><code>username</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Username for authentication</dd>
+        <dt><code>password</code> <code class="type">string</code> <span class="required">required</span></dt>
+        <dd>Password for authentication</dd>
 
     <div class="m-documentation--block">
       <svg class="m-documentation--tile-icon" xmlns="http://www.w3.org/2000/svg">
