@@ -32,8 +32,10 @@ func (pu *portUsecase) Port(params *models.PortParams) (tile *coreModels.Tile, e
 		if matched, _ := regexp.MatchString(`^0x[0-9a-fA-F]+$`, params.Payload); matched {
 			payload, err = hex.DecodeString(params.Payload[2:])
 		} else {
-			var s string
-			s, err = strconv.Unquote("\"" + params.Payload + "\"")
+			s := params.Payload
+			if u, e := strconv.Unquote("\"" + s + "\""); e == nil {
+				s = u
+			}
 			payload = []byte(s)
 		}
 		if err != nil {

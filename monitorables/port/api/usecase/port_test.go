@@ -99,6 +99,33 @@ func TestUsecase_CheckPort_WithPayload(t *testing.T) {
 	}
 }
 
+func TestUsecase_CheckPort_WithRawPayload(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+	rawPayload := []byte{0x0a, 0x0d, 0x0a, 0x0d}
+	mockRepo.On("OpenSocket", "monitoror.example.com", 22022, "tcp", rawPayload).Return(true, "pong", time.Millisecond*1, nil)
+	usecase := NewPortUsecase(mockRepo)
+
+	param := &models.PortParams{
+		Hostname: "monitoror.example.com",
+		Port:     22022,
+		Payload:  string([]byte{0x0a, 0x0d, 0x0a, 0x0d}),
+	}
+
+	eTile := coreModels.NewTile(api.PortTileType).WithMetrics(coreModels.MillisecondUnit)
+	eTile.Label = fmt.Sprintf("%s:%d", param.Hostname, param.Port)
+	eTile.Status = coreModels.SuccessStatus
+	eTile.Message = "responding"
+	eTile.Metrics.Values = []string{"1"}
+
+	rTile, err := usecase.Port(param)
+
+	if assert.NoError(t, err) {
+		assert.Equal(t, eTile, rTile)
+		mockRepo.AssertNumberOfCalls(t, "OpenSocket", 1)
+		mockRepo.AssertExpectations(t)
+	}
+}
+
 func TestUsecase_CheckPort_Display(t *testing.T) {
 	mockRepo := new(mocks.Repository)
 	mockRepo.On("OpenSocket", "monitoror.example.com", 22, "tcp", Anything).Return(true, "SSH-2.0-OpenSSH_7.9", time.Millisecond*5, nil)
