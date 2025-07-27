@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 	"testing"
+	"time"
 
 	coreModels "github.com/monitoror/monitoror/models"
 	"github.com/monitoror/monitoror/monitorables/command/api"
@@ -23,8 +24,6 @@ func TestUsecase_CommandStatus_Success(t *testing.T) {
 	eTile := coreModels.NewTile(api.CommandTileType)
 	eTile.Label = param.Command
 	eTile.Status = coreModels.SuccessStatus
-	eTile.Message = "ok"
-
 	rTile, err := usecase.CommandStatus(param)
 
 	if assert.NoError(t, err) {
@@ -44,7 +43,6 @@ func TestUsecase_CommandStatus_Fail(t *testing.T) {
 	eTile := coreModels.NewTile(api.CommandTileType)
 	eTile.Label = param.Command
 	eTile.Status = coreModels.FailedStatus
-	eTile.Message = "boom"
 
 	rTile, err := usecase.CommandStatus(param)
 
@@ -52,6 +50,46 @@ func TestUsecase_CommandStatus_Fail(t *testing.T) {
 		assert.Equal(t, eTile, rTile)
 		mockRepo.AssertNumberOfCalls(t, "Exec", 1)
 		mockRepo.AssertExpectations(t)
+	}
+}
+
+func TestUsecase_CommandStatus_DisplayRegex(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+	mockRepo.On("Exec", AnythingOfType("string")).Return("value:42", 0, 0, nil)
+	usecase := NewCommandUsecase(mockRepo)
+
+	param := &models.CommandParams{Command: "cmd", Display: `value:(\d+)`}
+
+	eTile := coreModels.NewTile(api.CommandTileType)
+	eTile.Label = param.Command
+	eTile.Status = coreModels.SuccessStatus
+	eTile.Message = "42"
+
+	rTile, err := usecase.CommandStatus(param)
+
+	if assert.NoError(t, err) {
+		assert.Equal(t, eTile, rTile)
+		mockRepo.AssertNumberOfCalls(t, "Exec", 1)
+	}
+}
+
+func TestUsecase_CommandStatus_MetricsDuration(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+	mockRepo.On("Exec", AnythingOfType("string")).Return("", 0, time.Second, nil)
+	usecase := NewCommandUsecase(mockRepo)
+
+	param := &models.CommandParams{Command: "cmd", Metrics: "duration"}
+
+	eTile := coreModels.NewTile(api.CommandTileType).WithMetrics(coreModels.MillisecondUnit)
+	eTile.Label = param.Command
+	eTile.Status = coreModels.SuccessStatus
+	eTile.Metrics.Values = []string{"1000"}
+
+	rTile, err := usecase.CommandStatus(param)
+
+	if assert.NoError(t, err) {
+		assert.Equal(t, eTile, rTile)
+		mockRepo.AssertNumberOfCalls(t, "Exec", 1)
 	}
 }
 

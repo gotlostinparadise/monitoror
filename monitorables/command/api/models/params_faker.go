@@ -12,6 +12,8 @@ type CommandParams struct {
 
 	Command     string `json:"command" query:"command" validate:"required"`
 	ExitCodeMax *int   `json:"exitCodeMax,omitempty" query:"exitCodeMax"`
+	Display     string `json:"display,omitempty" query:"display"`
+	Metrics     string `json:"metrics,omitempty" query:"metrics"`
 
 	Status  coreModels.TileStatus `json:"status" query:"status"`
 	Message string                `json:"message" query:"message"`

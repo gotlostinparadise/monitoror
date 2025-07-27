@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	coreModels "github.com/monitoror/monitoror/models"
@@ -19,7 +21,7 @@ func (cu *commandUsecase) CommandStatus(params *models.CommandParams) (*coreMode
 	tile := coreModels.NewTile(api.CommandTileType)
 	tile.Label = params.Command
 
-	output, exitCode, _, err := cu.repository.Exec(params.Command)
+	output, exitCode, duration, err := cu.repository.Exec(params.Command)
 	if err != nil {
 		tile.Status = coreModels.FailedStatus
 		tile.Message = err.Error()
@@ -31,6 +33,46 @@ func (cu *commandUsecase) CommandStatus(params *models.CommandParams) (*coreMode
 	} else {
 		tile.Status = coreModels.FailedStatus
 	}
-	tile.Message = strings.TrimSpace(output)
+
+	cleanedOutput := strings.TrimSpace(output)
+
+	if params.Display != "" {
+		if re, err := regexp.Compile(params.Display); err == nil {
+			if m := re.FindStringSubmatch(cleanedOutput); m != nil {
+				if len(m) > 1 {
+					tile.Message = m[1]
+				} else {
+					tile.Message = m[0]
+				}
+			}
+		}
+	}
+
+	if params.Metrics != "" {
+		switch params.Metrics {
+		case "duration":
+			tile.WithMetrics(coreModels.MillisecondUnit)
+			tile.Metrics.Values = []string{fmt.Sprintf("%d", duration.Milliseconds())}
+		case "exitCode":
+			tile.WithMetrics(coreModels.NumberUnit)
+			tile.Metrics.Values = []string{strconv.Itoa(exitCode)}
+		default:
+			if re, err := regexp.Compile(params.Metrics); err == nil {
+				if m := re.FindStringSubmatch(cleanedOutput); m != nil {
+					value := m[0]
+					if len(m) > 1 {
+						value = m[1]
+					}
+					unit := coreModels.RawUnit
+					if _, err := strconv.ParseFloat(value, 64); err == nil {
+						unit = coreModels.NumberUnit
+					}
+					tile.WithMetrics(unit)
+					tile.Metrics.Values = []string{value}
+				}
+			}
+		}
+	}
+
 	return tile, nil
 }
