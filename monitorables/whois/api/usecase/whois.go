@@ -23,7 +23,7 @@ func (wu *whoisUsecase) WHOIS(params *models.WHOISParams) (*coreModels.Tile, err
 	tile := coreModels.NewTile(api.WHOISTileType)
 	tile.Label = params.Domain
 
-	expiry, err := wu.repository.DomainExpiration(params.Domain)
+	expiry, raw, err := wu.repository.DomainExpiration(params.Domain)
 	if err != nil {
 		tile.Status = coreModels.FailedStatus
 		tile.Message = err.Error()
@@ -39,7 +39,7 @@ func (wu *whoisUsecase) WHOIS(params *models.WHOISParams) (*coreModels.Tile, err
 
 	tile.WithMetrics(coreModels.RawUnit)
 	tile.Metrics.Values = []string{fmt.Sprintf("Expires in %d days", remaining)}
-	tile.Message = expiry.Format(time.RFC3339)
+	tile.Message = buildMessage(params.Display, params.Domain, expiry, raw)
 
 	return tile, nil
 }

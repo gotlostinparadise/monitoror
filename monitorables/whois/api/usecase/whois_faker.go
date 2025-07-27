@@ -33,8 +33,10 @@ func (wu *whoisUsecase) WHOIS(params *models.WHOISParams) (*coreModels.Tile, err
 	tile.Status = nonempty.Struct(params.Status, status).(coreModels.TileStatus)
 
 	remaining := wu.computeRemainingDays(params.Domain)
+	expiry := time.Now().AddDate(0, 0, remaining)
 	tile.Metrics.Values = []string{fmt.Sprintf("Expires in %d days", remaining)}
-	tile.Message = time.Now().AddDate(0, 0, remaining).Format(time.RFC3339)
+	raw := fmt.Sprintf("Domain Name: %s\nExpiry Date: %s", params.Domain, expiry.Format(time.RFC3339))
+	tile.Message = buildMessage(params.Display, params.Domain, expiry, raw)
 
 	return tile, nil
 }
