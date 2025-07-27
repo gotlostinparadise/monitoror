@@ -2,6 +2,7 @@ package monitorables
 
 import (
 	"github.com/monitoror/monitoror/monitorables/azuredevops"
+	"github.com/monitoror/monitoror/monitorables/command"
 	"github.com/monitoror/monitoror/monitorables/dns"
 	"github.com/monitoror/monitoror/monitorables/github"
 	"github.com/monitoror/monitoror/monitorables/gitlab"
@@ -32,6 +33,8 @@ func RegisterMonitorables(s *store.Store) {
 	s.Registry.RegisterMonitorable(ping.NewMonitorable(s))
 	// ------------ PINGDOM ------------
 	s.Registry.RegisterMonitorable(pingdom.NewMonitorable(s))
+	// ------------ COMMAND ------------
+	s.Registry.RegisterMonitorable(command.NewMonitorable(s))
 	// ------------ PORT ------------
 	s.Registry.RegisterMonitorable(port.NewMonitorable(s))
 	// ------------ RTSP ------------
