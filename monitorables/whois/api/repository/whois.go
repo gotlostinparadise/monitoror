@@ -71,7 +71,6 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 		line := strings.TrimSpace(scanner.Text())
 		if m := re.FindStringSubmatch(line); m != nil {
 			dateStr := strings.TrimSpace(m[1])
-	
 			layouts := []string{
 				time.RFC3339,
 				"2006-01-02T15:04:05Z",
@@ -79,16 +78,15 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 				"2006-01-02T15:04:05Z07:00",
 				"2006-01-02 15:04:05-07",
 				"2006-01-02",
-				"Mon Jan 02 15:04:05 2006",   // <‑‑ NEW: handles “Fri Oct 21 05:54:20 2033”
+				"Mon Jan 2 15:04:05 2006", // handle “Fri Oct 21 05:54:20 2033” and leading zero days
+				"Mon Jan 2 2006",          // handle “Wed Sep 09 2026”
 			}
-	
 			for _, l := range layouts {
 				if t, err := time.Parse(l, dateStr); err == nil {
-					return t.UTC(), nil           // normalise to UTC
+					return t.UTC(), nil // normalise to UTC
 				}
 			}
 		}
 	}
-	
 	return time.Time{}, fmt.Errorf("expiration date not found")
 }
