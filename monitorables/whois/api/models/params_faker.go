@@ -12,6 +12,7 @@ type WHOISParams struct {
 
 	Domain   string `json:"domain" query:"domain"`
 	WarnDays int    `json:"warnDays" query:"warnDays"`
+	Display  string `json:"display" query:"display"`
 
 	Status coreModels.TileStatus `json:"status" query:"status"`
 }

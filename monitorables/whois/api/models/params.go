@@ -9,4 +9,5 @@ type WHOISParams struct {
 
 	Domain   string `json:"domain" query:"domain" validate:"required"`
 	WarnDays int    `json:"warnDays" query:"warnDays" validate:"gte=0"`
+	Display  string `json:"display" query:"display"`
 }

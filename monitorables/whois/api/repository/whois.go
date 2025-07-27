@@ -33,16 +33,16 @@ func (r *whoisRepository) query(server, query string) (string, error) {
 	return string(data), nil
 }
 
-func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
+func (r *whoisRepository) DomainExpiration(domain string) (time.Time, string, error) {
 	parts := strings.Split(domain, ".")
 	if len(parts) < 2 {
-		return time.Time{}, fmt.Errorf("invalid domain")
+		return time.Time{}, "", fmt.Errorf("invalid domain")
 	}
 	tld := parts[len(parts)-1]
 
 	res, err := r.query("whois.iana.org", tld)
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, "", err
 	}
 	server := ""
 	scanner := bufio.NewScanner(strings.NewReader(res))
@@ -54,12 +54,12 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 		}
 	}
 	if server == "" {
-		return time.Time{}, fmt.Errorf("whois server not found")
+		return time.Time{}, "", fmt.Errorf("whois server not found")
 	}
 
 	out, err := r.query(server, domain)
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, "", err
 	}
 
 	// Look for any expire-related line. Examples include:
@@ -83,10 +83,10 @@ func (r *whoisRepository) DomainExpiration(domain string) (time.Time, error) {
 			}
 			for _, l := range layouts {
 				if t, err := time.Parse(l, dateStr); err == nil {
-					return t.UTC(), nil // normalise to UTC
+					return t.UTC(), out, nil // normalise to UTC
 				}
 			}
 		}
 	}
-	return time.Time{}, fmt.Errorf("expiration date not found")
+	return time.Time{}, out, fmt.Errorf("expiration date not found")
 }
