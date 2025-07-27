@@ -46,6 +46,10 @@ func (cu *commandUsecase) CommandStatus(params *models.CommandParams) (*coreMode
 				}
 			}
 		}
+
+		if params.Display == "full" {
+			tile.Message = cleanedOutput
+		}
 	}
 
 	if params.Metrics != "" {
