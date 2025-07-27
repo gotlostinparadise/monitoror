@@ -33,6 +33,7 @@ func (cu *commandUsecase) CommandStatus(params *models.CommandParams) (*coreMode
 	} else {
 		tile.Status = coreModels.FailedStatus
 	}
+
 	cleanedOutput := strings.TrimSpace(output)
 
 	if params.Display != "" {

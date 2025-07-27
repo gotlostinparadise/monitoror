@@ -24,7 +24,6 @@ func TestUsecase_CommandStatus_Success(t *testing.T) {
 	eTile := coreModels.NewTile(api.CommandTileType)
 	eTile.Label = param.Command
 	eTile.Status = coreModels.SuccessStatus
-
 	rTile, err := usecase.CommandStatus(param)
 
 	if assert.NoError(t, err) {
