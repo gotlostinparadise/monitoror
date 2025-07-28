@@ -40,15 +40,10 @@ export default function useTileMetrics(state: ComputedRef<TileState | undefined>
       [TileValueUnit.Raw]: '',
     }
 
-      let value = values.value[values.value.length - 1]
-      if (unit.value === TileValueUnit.Millisecond) {
-        const floatValue = parseFloat(value)
-        if (floatValue >= 1) {
-          value = Math.round(floatValue).toString()
-        } else {
-          value = floatValue.toString()
-        }
-      } else if (unit.value === TileValueUnit.Ratio) {
+    let value = values.value[values.value.length - 1]
+    if (unit.value === TileValueUnit.Millisecond) {
+      // value = Math.round(parseFloat(value)).toString()
+    } else if (unit.value === TileValueUnit.Ratio) {
       value = (parseFloat(value) * 100).toFixed(2).toString()
     }
 
